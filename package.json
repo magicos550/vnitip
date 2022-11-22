@@ -4,19 +4,31 @@
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-native": "0.70.5",
+    "react-native-paper": "^5.0.0-rc.10",
+    "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.7"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@types/react": "~18.0.24",
     "@types/react-native": "~0.70.6",
-    "typescript": "^4.6.3"
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.0.1",
+    "eslint": "^8.7.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.31.10",
+    "prettier": "^2.5.1",
+    "typescript": "^4.4.4"
   },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint / --ext .ts,.tsx"
   },
   "version": "1.0.0",
   "private": true,
