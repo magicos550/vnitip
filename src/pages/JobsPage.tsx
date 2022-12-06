@@ -1,30 +1,30 @@
-import { View, StyleSheet } from 'react-native'
-import { IconButton, MD3Colors, Text, withTheme } from 'react-native-paper'
-import { useAppTheme } from '../../App'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { IconButton, MD3Colors, Text } from 'react-native-paper'
+import { useAppTheme } from '../hooks/useCustomTheme'
 
 const JobsPage = (): JSX.Element => {
   const theme = useAppTheme()
   return (
     <View style={styles.menu}>
-      <View style={[styles.menuButton, { backgroundColor: theme.colors.menuRed }]}>
-        <IconButton icon='plus-circle-outline' iconColor={MD3Colors.neutral90} size={80} />
-        <Text style={styles.menuText}>Новый документ</Text>
-      </View>
+      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuRed }]}>
+        <IconButton icon='egg-outline' iconColor={MD3Colors.neutral90} size={80} />
+        <Text style={styles.menuText}>Сбор яйца</Text>
+      </TouchableOpacity>
 
-      <View style={[styles.menuButton, { backgroundColor: theme.colors.menuOrange }]}>
-        <IconButton icon='play-circle-outline' iconColor={MD3Colors.neutral90} size={80} />
-        <Text style={styles.menuText}>Продолжить</Text>
-      </View>
+      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuOrange }]}>
+        <IconButton icon='scale-balance' iconColor={MD3Colors.neutral90} size={80} />
+        <Text style={styles.menuText}>Взвешивание яйца</Text>
+      </TouchableOpacity>
 
-      <View style={[styles.menuButton, { backgroundColor: theme.colors.menuPurple }]}>
-        <IconButton icon='file-search-outline' iconColor={MD3Colors.neutral90} size={80} />
-        <Text style={styles.menuText}>Каталог документов</Text>
-      </View>
+      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuPurple }]}>
+        <IconButton icon='scale' iconColor={MD3Colors.neutral90} size={80} />
+        <Text style={styles.menuText}>ЖМ</Text>
+      </TouchableOpacity>
 
-      <View style={[styles.menuButton, { backgroundColor: theme.colors.menuGreen }]}>
-        <IconButton icon='cloud-outline' iconColor={MD3Colors.neutral90} size={80} />
-        <Text style={styles.menuText}>Отправить документ</Text>
-      </View>
+      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuGreen }]}>
+        <IconButton icon='notebook-plus-outline' iconColor={MD3Colors.neutral90} size={80} />
+        <Text style={styles.menuText}>Бонитировка</Text>
+      </TouchableOpacity>
     </View>
   )
 }

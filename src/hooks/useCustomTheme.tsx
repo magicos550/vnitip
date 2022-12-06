@@ -7,10 +7,9 @@ const theme = {
   colors: {
     ...MD3LightTheme.colors,
     ...customTheme.colors,
-    customColor: '#ff00ff',
   },
 }
 
 export type AppTheme = typeof theme
 
-export const useCustomTheme = () => useTheme<AppTheme>()
+export const useAppTheme = () => useTheme<AppTheme>()

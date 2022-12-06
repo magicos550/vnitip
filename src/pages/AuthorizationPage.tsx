@@ -1,23 +1,25 @@
 import { View, StyleSheet } from 'react-native'
-import { IconButton, MD3Colors, withTheme, Text, Button } from 'react-native-paper'
+import { IconButton, MD3Colors, Text, Button, useTheme } from 'react-native-paper'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { AppTheme, StackParamsList } from '../../App'
+import { StackParamsList } from '../Index'
 import * as Clipboard from 'expo-clipboard'
 import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { login } from '../store/slices/userSlice'
 
-interface iProps {
-  theme: AppTheme
-  navigation: NativeStackScreenProps<StackParamsList, 'Authorization'>['navigation']
-}
+type iProps = NativeStackScreenProps<StackParamsList, 'Authorization'>
 
-const AuthorizationPage = ({ theme, navigation }: iProps): JSX.Element => {
-  useEffect(() => {
+const AuthorizationPage = ({ navigation }: iProps): JSX.Element => {
+  const theme = useTheme();
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {    
     const handleClipboard = Clipboard.addClipboardListener(() => {
       Clipboard.getStringAsync().then((content: string) => {
-        // alert('Copy pasta! Here is the string that was copied: ' + content)
+        dispatch(login({id: content}))
         navigation.navigate('Home')
       })
-
       return Clipboard.removeClipboardListener(handleClipboard)
     })
   }, [])
@@ -61,4 +63,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default withTheme(AuthorizationPage)
+export default AuthorizationPage

@@ -1,14 +1,14 @@
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+// import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import JobsPage from '../../pages/JobsPage'
 import SettingsPage from '../../pages/SettingsPage'
 import { Ionicons } from '@expo/vector-icons'
 
-const Tab = createMaterialBottomTabNavigator()
+// const Tab = createMaterialBottomTabNavigator()
 
 const BottomNav = (): JSX.Element => {
   return (
     <>
-      <Tab.Navigator
+      {/* <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color }) => {
             let iconName
@@ -25,7 +25,7 @@ const BottomNav = (): JSX.Element => {
       >
         <Tab.Screen name='Jobs' component={JobsPage} options={{ title: 'Задачи' }} />
         <Tab.Screen name='Settings' component={SettingsPage} options={{ title: 'Настройки' }} />
-      </Tab.Navigator>
+      </Tab.Navigator> */}
     </>
   )
 }

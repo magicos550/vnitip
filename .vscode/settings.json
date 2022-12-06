@@ -1,6 +1,6 @@
 {
-  "typescript.tsdk": "node_modules\\typescript\\lib",
-  "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+  //"typescript.tsdk": "node_modules\\typescript\\lib",
+  //"typescript.format.insertSpaceBeforeFunctionParenthesis": true,
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
   "editor.formatOnPaste": false, // required
   "editor.formatOnType": false, // required
