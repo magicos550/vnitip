@@ -4,20 +4,19 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StackParamsList } from '../Index'
 import * as Clipboard from 'expo-clipboard'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { login } from '../store/slices/userSlice'
+import { useAppDispatch } from '../store/store'
 
 type iProps = NativeStackScreenProps<StackParamsList, 'Authorization'>
 
 const AuthorizationPage = ({ navigation }: iProps): JSX.Element => {
-  const theme = useTheme();
-  const dispatch = useDispatch();
+  const theme = useTheme()
+  const dispatch = useAppDispatch()
 
-
-  useEffect(() => {    
+  useEffect(() => {
     const handleClipboard = Clipboard.addClipboardListener(() => {
       Clipboard.getStringAsync().then((content: string) => {
-        dispatch(login({id: content}))
+        dispatch(login({ id: content }))
         navigation.navigate('Home')
       })
       return Clipboard.removeClipboardListener(handleClipboard)

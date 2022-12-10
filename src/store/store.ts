@@ -4,19 +4,20 @@ import logger from 'redux-logger'
 
 import userReducer from './slices/userSlice'
 import settingsReducer from './slices/settingsSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const reducer = {
   user: userReducer,
-  settings: settingsReducer
+  settings: settingsReducer,
 }
 
 const preloadedState = {
-  user: {id: null},
+  user: { id: null },
   settings: {
     area: '',
     housing: '',
-    line: ''
-  }
+    line: '',
+  },
 }
 
 export const store = configureStore({
@@ -27,3 +28,7 @@ export const store = configureStore({
 })
 
 export type RootState = ReturnType<typeof store.getState>
+export type appDispatch = typeof store.dispatch
+export const useAppDispatch = () => useDispatch<appDispatch>()
+export const useAppSelector = <Return>(callback: (state: RootState) => Return) =>
+  useSelector((state: RootState) => callback(state))
