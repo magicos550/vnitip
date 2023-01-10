@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
-
 import logger from 'redux-logger'
+import { useDispatch, useSelector } from 'react-redux'
 
 import userReducer from './slices/userSlice'
 import settingsReducer from './slices/settingsSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import eggCollectionReducer from './slices/jobs/eggCollectionSlice'
+import eggMassReducer from './slices/jobs/eggMassSlice'
 
 const reducer = {
   user: userReducer,
   settings: settingsReducer,
+  eggCollection: eggCollectionReducer,
+  eggMass: eggMassReducer,
 }
 
 const preloadedState = {

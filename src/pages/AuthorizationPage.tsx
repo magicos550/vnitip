@@ -1,16 +1,14 @@
 import { View, StyleSheet } from 'react-native'
-import { IconButton, MD3Colors, Text, Button, useTheme } from 'react-native-paper'
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { StackParamsList } from '../Index'
+import { IconButton, MD3Colors, Text } from 'react-native-paper'
 import * as Clipboard from 'expo-clipboard'
 import { useEffect } from 'react'
 import { login } from '../store/slices/userSlice'
 import { useAppDispatch } from '../store/store'
+import { NavigationProp } from '../types'
+import { useAppTheme } from '../hooks/useCustomTheme'
 
-type iProps = NativeStackScreenProps<StackParamsList, 'Authorization'>
-
-const AuthorizationPage = ({ navigation }: iProps): JSX.Element => {
-  const theme = useTheme()
+const AuthorizationPage = ({ navigation }: NavigationProp): JSX.Element => {
+  const theme = useAppTheme()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -19,8 +17,9 @@ const AuthorizationPage = ({ navigation }: iProps): JSX.Element => {
         dispatch(login({ id: content }))
         navigation.navigate('Home')
       })
-      return Clipboard.removeClipboardListener(handleClipboard)
     })
+
+    return () => Clipboard.removeClipboardListener(handleClipboard)
   }, [])
 
   return (
@@ -33,7 +32,6 @@ const AuthorizationPage = ({ navigation }: iProps): JSX.Element => {
         <Text variant='bodyMedium' style={{ textAlign: 'center' }}>
           Для прохождения авторизации {'\n'} просканируйте штрих-код
         </Text>
-        <Button onPress={() => Clipboard.setStringAsync('Some String')}>test</Button>
       </View>
     </>
   )

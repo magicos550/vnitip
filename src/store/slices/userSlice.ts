@@ -1,22 +1,22 @@
-import { createSlice , type PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
-interface iUserInterface {
-    id: string | null
+interface iUser {
+  id: string | null
 }
 
-const initialState = {id: null} as iUserInterface;
+const initialState = { id: null } as iUser
 
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        login (state , action: PayloadAction<iUserInterface>) {
-            state.id = action.payload.id
-        },
-        logout (state) {
-            state.id = ''
-        }
-    }
+  name: 'user',
+  initialState,
+  reducers: {
+    login(state, action: PayloadAction<iUser>) {
+      state.id = action.payload.id
+    },
+    logout(state) {
+      state.id = ''
+    },
+  },
 })
 
 export const { login, logout } = userSlice.actions

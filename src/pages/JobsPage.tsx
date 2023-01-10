@@ -1,17 +1,24 @@
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { IconButton, MD3Colors, Text } from 'react-native-paper'
 import { useAppTheme } from '../hooks/useCustomTheme'
+import { NavigationProp } from '../types'
 
-const JobsPage = (): JSX.Element => {
+const JobsPage = ({ navigation }: NavigationProp): JSX.Element => {
   const theme = useAppTheme()
   return (
     <View style={styles.menu}>
-      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuRed }]}>
+      <TouchableOpacity
+        style={[styles.menuButton, { backgroundColor: theme.colors.menuRed }]}
+        onPress={() => navigation.navigate('EggCollection')}
+      >
         <IconButton icon='egg-outline' iconColor={MD3Colors.neutral90} size={80} />
         <Text style={styles.menuText}>Сбор яйца</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.menuButton, { backgroundColor: theme.colors.menuOrange }]}>
+      <TouchableOpacity
+        style={[styles.menuButton, { backgroundColor: theme.colors.menuOrange }]}
+        onPress={() => navigation.navigate('EggMass')}
+      >
         <IconButton icon='scale-balance' iconColor={MD3Colors.neutral90} size={80} />
         <Text style={styles.menuText}>Взвешивание яйца</Text>
       </TouchableOpacity>

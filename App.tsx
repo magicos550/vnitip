@@ -15,7 +15,6 @@ const theme = {
 }
 
 export default function App(): JSX.Element {
-
   return (
     <ReduxProvider store={store}>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -31,6 +30,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    marginTop: StatusBar.currentHeight
-  }
+    height: '100%',
+    marginTop: StatusBar.currentHeight,
+  },
 })
