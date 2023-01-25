@@ -9,12 +9,18 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper'
-import { RootState, useAppDispatch, useAppSelector } from '../../../store/store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '../../../store/store'
 import { useAppTheme } from '../../../hooks/useCustomTheme'
 import CreateTable from '../../../components/tables/CreateTable'
-import { add, edit, load, remove } from '../../../store/slices/jobs/eggMassSlice'
+import { add, edit, load, remove } from '../../../store/slices/jobs/liveWeightSlice'
 import * as Clipboard from 'expo-clipboard'
-import { eggMassAdd, eggMassDelete, eggMassEdit, eggMassLoad } from '../../../database/CRUD/EggMass'
+import {
+  liveWeightAdd,
+  liveWeightDelete,
+  liveWeightEdit,
+  liveWeightLoad,
+} from '../../../database/CRUD/LiveWeight'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
 
@@ -25,7 +31,7 @@ interface iEggItem {
   date: string
 }
 
-const EggMass = (): JSX.Element => {
+const LiveWeight = (): JSX.Element => {
   const theme = useAppTheme()
   const dispatch = useAppDispatch()
 
@@ -38,10 +44,10 @@ const EggMass = (): JSX.Element => {
 
   const [egg, setEgg] = useState<iEggItem>({ id: null, barcode: '', mass: 0, date: '' })
   const [loading, setLoading] = useState<boolean>(false)
-  const items = useAppSelector((state: RootState) => state.eggMass)
+  const items = useSelector((state: RootState) => state.liveWeight)
 
   const handleDeleteButtonClick = (id: number): void => {
-    eggMassDelete(id)
+    liveWeightDelete(id)
       .then(() => {
         dispatch(remove(id))
       })
@@ -55,16 +61,30 @@ const EggMass = (): JSX.Element => {
 
   const handlePopupButtonClick = (): void => {
     if (!egg.id) {
-      eggMassAdd(egg.barcode, egg.mass)
+      liveWeightAdd(egg.barcode, egg.mass)
         .then((item) => {
-          dispatch(add(item))
+          dispatch(
+            add({
+              ID: item.ID,
+              Barcode: item.Barcode,
+              Mass: item.Mass,
+              Date: item.Date,
+            }),
+          )
           hideModal()
         })
         .catch((error) => console.error(error))
     } else {
-      eggMassEdit(egg.id, egg.mass, egg.date, egg.barcode)
+      liveWeightEdit(egg.id, egg.mass, egg.date, egg.barcode)
         .then((item) => {
-          dispatch(edit(item))
+          dispatch(
+            edit({
+              ID: item.ID,
+              Barcode: item.Barcode,
+              Mass: item.Mass,
+              Date: item.Date,
+            }),
+          )
           hideModal()
         })
         .catch((error) => console.error(error))
@@ -74,7 +94,7 @@ const EggMass = (): JSX.Element => {
   useEffect(() => {
     ;(async () => {
       await setLoading(true)
-      await eggMassLoad()
+      await liveWeightLoad()
         .then((arr) => {
           dispatch(load(arr))
           setLoading(false)
@@ -115,11 +135,13 @@ const EggMass = (): JSX.Element => {
 
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modal}>
-          <Text style={{ textAlign: 'center' }}>№ {egg.barcode}</Text>
+          <Text style={{ textAlign: 'center' }}>
+            № {egg.barcode} {egg.id}
+          </Text>
           <TextInput
             mode='outlined'
             keyboardType='numeric'
-            label='Масса яйца в граммах'
+            label='Живая масса'
             value={(egg.mass && String(egg.mass)) || ''}
             onChangeText={(text) =>
               setEgg({ id: egg.id, barcode: egg.barcode, mass: Number(text), date: egg.date })
@@ -159,4 +181,4 @@ const styles = StyleSheet.create({
   modal: { backgroundColor: 'white', padding: 20, width: '90%', alignSelf: 'center' },
 })
 
-export default EggMass
+export default LiveWeight

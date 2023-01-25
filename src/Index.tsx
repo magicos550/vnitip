@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from './store/store'
 import EggCollection from './pages/jobs/EggCollection/EggCollection'
 import EggMass from './pages/jobs/EggMass/EggMass'
+import LiveWeight from './pages/jobs/LiveWeight/LiveWeight'
+import Appraisal from './pages/jobs/Appraisal/Appraisal'
 
 export type StackParamsList = {
   Authorization: undefined
@@ -18,6 +20,8 @@ export type StackParamsList = {
 
   EggCollection: undefined
   EggMass: undefined
+  LiveWeight: undefined
+  Appraisal: undefined
 }
 
 const Stack = createNativeStackNavigator<StackParamsList>()
@@ -43,6 +47,8 @@ export default function Index(): JSX.Element {
 
           <Stack.Screen name='EggCollection' component={EggCollection} />
           <Stack.Screen name='EggMass' component={EggMass} />
+          <Stack.Screen name='LiveWeight' component={LiveWeight} />
+          <Stack.Screen name='Appraisal' component={Appraisal} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

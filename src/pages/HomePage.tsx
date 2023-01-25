@@ -3,6 +3,7 @@ import JobsPage from './JobsPage'
 import SettingsPage from './SettingsPage'
 import { useMemo, useState } from 'react'
 import { NavigationProp } from '../types'
+import Header from '../components/core/Header'
 
 const HomePage = ({ navigation, route }: NavigationProp): JSX.Element => {
   const [index, setIndex] = useState(0)
@@ -25,11 +26,13 @@ const HomePage = ({ navigation, route }: NavigationProp): JSX.Element => {
   })
 
   return (
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-    />
+    <>
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
+    </>
   )
 }
 

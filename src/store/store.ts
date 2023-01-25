@@ -6,12 +6,16 @@ import userReducer from './slices/userSlice'
 import settingsReducer from './slices/settingsSlice'
 import eggCollectionReducer from './slices/jobs/eggCollectionSlice'
 import eggMassReducer from './slices/jobs/eggMassSlice'
+import liveWeightReducer from './slices/jobs/liveWeightSlice'
+import appraisalReducer from './slices/jobs/appraisalSlice'
 
 const reducer = {
   user: userReducer,
   settings: settingsReducer,
   eggCollection: eggCollectionReducer,
   eggMass: eggMassReducer,
+  liveWeight: liveWeightReducer,
+  appraisal: appraisalReducer,
 }
 
 const preloadedState = {
@@ -25,7 +29,8 @@ const preloadedState = {
 
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  middleware: [],
   devTools: process.env.NODE_ENV !== 'production',
   preloadedState,
 })

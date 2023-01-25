@@ -9,23 +9,32 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper'
-import { RootState, useAppDispatch, useAppSelector } from '../../../store/store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '../../../store/store'
 import { useAppTheme } from '../../../hooks/useCustomTheme'
 import CreateTable from '../../../components/tables/CreateTable'
-import { add, edit, load, remove } from '../../../store/slices/jobs/eggMassSlice'
+import { add, edit, load, remove } from '../../../store/slices/jobs/appraisalSlice'
 import * as Clipboard from 'expo-clipboard'
-import { eggMassAdd, eggMassDelete, eggMassEdit, eggMassLoad } from '../../../database/CRUD/EggMass'
+import {
+  appraisalAdd,
+  appraisalDelete,
+  appraisalEdit,
+  appraisalLoad,
+} from '../../../database/CRUD/Appraisal'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
 
-interface iEggItem {
+interface iAppraisalItem {
   id?: number | null
   barcode: string
   mass: number
+  chest: number
+  legs: number
+  remark: string
   date: string
 }
 
-const EggMass = (): JSX.Element => {
+const Appraisal = (): JSX.Element => {
   const theme = useAppTheme()
   const dispatch = useAppDispatch()
 
@@ -36,12 +45,20 @@ const EggMass = (): JSX.Element => {
     setVisible(false)
   }
 
-  const [egg, setEgg] = useState<iEggItem>({ id: null, barcode: '', mass: 0, date: '' })
+  const [egg, setEgg] = useState<iAppraisalItem>({
+    id: null,
+    barcode: '',
+    mass: 0,
+    chest: 0,
+    legs: 0,
+    remark: '',
+    date: '',
+  })
   const [loading, setLoading] = useState<boolean>(false)
-  const items = useAppSelector((state: RootState) => state.eggMass)
+  const items = useSelector((state: RootState) => state.appraisal)
 
   const handleDeleteButtonClick = (id: number): void => {
-    eggMassDelete(id)
+    appraisalDelete(id)
       .then(() => {
         dispatch(remove(id))
       })
@@ -49,22 +66,50 @@ const EggMass = (): JSX.Element => {
   }
 
   const handleEditButtonClick = (item: Record<string, any>): void => {
-    setEgg({ id: item.ID, barcode: item.Barcode, mass: item.Mass, date: item.date })
+    setEgg({
+      id: item.ID,
+      barcode: item.Barcode,
+      mass: item.Mass,
+      chest: item.Chest,
+      legs: item.Legs,
+      remark: item.Remark,
+      date: item.Date,
+    })
+
     showModal()
   }
 
   const handlePopupButtonClick = (): void => {
     if (!egg.id) {
-      eggMassAdd(egg.barcode, egg.mass)
+      appraisalAdd(egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
         .then((item) => {
-          dispatch(add(item))
+          dispatch(
+            add({
+              ID: item.ID,
+              Barcode: item.Barcode,
+              Mass: item.Mass,
+              Chest: item.Chest,
+              Legs: item.Legs,
+              Remark: item.Remark,
+              Date: item.Date,
+            }),
+          )
           hideModal()
         })
         .catch((error) => console.error(error))
     } else {
-      eggMassEdit(egg.id, egg.mass, egg.date, egg.barcode)
+      appraisalEdit(egg.id, egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
         .then((item) => {
-          dispatch(edit(item))
+          dispatch(
+            edit({
+              ID: item.ID,
+              Barcode: item.Barcode,
+              Mass: item.Mass,
+              Chest: item.Chest,
+              Legs: item.Legs,
+              Date: item.Date,
+            }),
+          )
           hideModal()
         })
         .catch((error) => console.error(error))
@@ -74,7 +119,7 @@ const EggMass = (): JSX.Element => {
   useEffect(() => {
     ;(async () => {
       await setLoading(true)
-      await eggMassLoad()
+      await appraisalLoad()
         .then((arr) => {
           dispatch(load(arr))
           setLoading(false)
@@ -84,7 +129,14 @@ const EggMass = (): JSX.Element => {
 
     const handleClipboard = Clipboard.addClipboardListener((): void => {
       Clipboard.getStringAsync().then((content: string) => {
-        setEgg({ barcode: content, mass: 0, date: moment().format('DD.MM.YYYY H:m:s') })
+        setEgg({
+          barcode: content,
+          mass: 0,
+          chest: 0,
+          legs: 0,
+          remark: '',
+          date: moment().format('DD.MM.YYYY H:m:s'),
+        })
         showModal()
       })
     })
@@ -107,7 +159,10 @@ const EggMass = (): JSX.Element => {
           items={items && Object.keys(items).map((key) => items[key])}
           columns={[
             { name: '№', value: 'Barcode' },
-            { name: 'Масса', value: 'Mass', suffix: 'г.' },
+            /* { name: 'Масса', value: 'Mass', suffix: 'г.' },
+            { name: 'Грудь', value: 'Chest', suffix: 'г.' },
+            { name: 'Ноги', value: 'Legs', suffix: 'г.' },
+            { name: 'Примечание', value: 'Remark' }, */
           ]}
           handlers={{ delete: handleDeleteButtonClick, edit: handleEditButtonClick }}
         />
@@ -119,11 +174,29 @@ const EggMass = (): JSX.Element => {
           <TextInput
             mode='outlined'
             keyboardType='numeric'
-            label='Масса яйца в граммах'
+            label='Живая масса'
             value={(egg.mass && String(egg.mass)) || ''}
-            onChangeText={(text) =>
-              setEgg({ id: egg.id, barcode: egg.barcode, mass: Number(text), date: egg.date })
-            }
+            onChangeText={(text) => setEgg({ ...egg, mass: Number(text) })}
+          />
+          <TextInput
+            mode='outlined'
+            keyboardType='numeric'
+            label='Грудь'
+            value={(egg.chest && String(egg.chest)) || ''}
+            onChangeText={(text) => setEgg({ ...egg, chest: Number(text) })}
+          />
+          <TextInput
+            mode='outlined'
+            keyboardType='numeric'
+            label='Ноги'
+            value={(egg.legs && String(egg.legs)) || ''}
+            onChangeText={(text) => setEgg({ ...egg, legs: Number(text) })}
+          />
+          <TextInput
+            mode='outlined'
+            label='Примечание'
+            value={(egg.remark && String(egg.remark)) || ''}
+            onChangeText={(text) => setEgg({ ...egg, remark: text })}
           />
           <Button style={{ marginTop: 10 }} onPress={handlePopupButtonClick}>
             Сохранить
@@ -156,7 +229,14 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
   },
-  modal: { backgroundColor: 'white', padding: 20, width: '90%', alignSelf: 'center' },
+  modal: {
+    backgroundColor: 'white',
+    padding: 20,
+    width: '90%',
+    alignSelf: 'center',
+    position: 'relative',
+    elevation: 10,
+  },
 })
 
-export default EggMass
+export default Appraisal

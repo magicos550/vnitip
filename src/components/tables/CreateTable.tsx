@@ -1,70 +1,102 @@
 import { StyleSheet, View } from 'react-native'
-import { DataTable, IconButton } from 'react-native-paper'
-import { useState } from 'react'
+import { DataTable, IconButton, Text } from 'react-native-paper'
+import { useState, memo, useEffect, useMemo } from 'react'
 import { useAppTheme } from '../../hooks/useCustomTheme'
 
 interface iProps {
   columns: {
     name: string
     value: any
+    suffix?: string
   }[]
   items: {
     [key: string]: any
   }[]
-  itemsLength: number
-  itemsPerPage: number
   handlers?: {
     delete?: (arg0: number) => void
+    edit?: (item: Record<string, unknown>) => void
   }
 }
 
 const CreateTable = (props: iProps): JSX.Element => {
   const theme = useAppTheme()
-  const [page, setPage] = useState<number>(0)
-  const startItemOnPage = page * props.itemsPerPage
-  const endItemOnPage = page * props.itemsPerPage + props.itemsPerPage
-  const paginationLabel = `${startItemOnPage + 1}-${endItemOnPage} из ${props.itemsLength}`
+  const items = props.items
+  const columns = props.columns
+  const numberOfItemsPerPage = 8
+  const currentPage = Math.ceil(items.length / numberOfItemsPerPage)
+
+  const [page, setPage] = useState(currentPage)
+  const from = page * numberOfItemsPerPage
+  const to = Math.min((page + 1) * numberOfItemsPerPage, items.length)
+
+  console.log(currentPage)
+
+  useEffect(() => {
+    setPage(currentPage)
+  }, [currentPage])
 
   return (
     <View style={styles.container}>
       <DataTable style={styles.table}>
         <DataTable.Header>
-          {props.columns.map((item) => (
-            <DataTable.Title key={item.name}>{item.name}</DataTable.Title>
+          {columns.map((item) => (
+            <DataTable.Title style={{ flexGrow: +(item.name === '№' ? 2 : 1) }} key={item.name}>
+              {item.name}
+            </DataTable.Title>
           ))}
 
           {props.handlers && <DataTable.Title numeric>Управление</DataTable.Title>}
         </DataTable.Header>
 
-        <View style={styles.tableRows}>
-          {props.items.slice(startItemOnPage, endItemOnPage).map((item) => (
+        <View>
+          {items.slice(from, to).map((item) => (
             <DataTable.Row key={item.ID}>
-              {props.columns.map((column) => (
-                <DataTable.Cell key={column.name}>{item[column.value]}</DataTable.Cell>
+              {columns.map((column) => (
+                <DataTable.Cell
+                  key={column.name}
+                  style={{ flexGrow: +(column.name === '№' ? 2 : 1) }}
+                >
+                  <Text variant='labelLarge'>
+                    {item[column.value]} {column.suffix && column.suffix}
+                  </Text>
+                </DataTable.Cell>
               ))}
-              {props.handlers && props.handlers.delete && (
-                <DataTable.Cell numeric>
-                  <IconButton
-                    icon='delete'
-                    iconColor={theme.colors.error}
-                    size={30}
-                    onPress={() => props.handlers?.delete?.(item.ID)}
-                  />
+              {props.handlers && (
+                <DataTable.Cell numeric style={{ flexGrow: 1 }}>
+                  {props.handlers.edit && (
+                    <IconButton
+                      icon='pencil'
+                      iconColor={theme.colors.primary}
+                      size={20}
+                      onPress={() => props.handlers?.edit?.(item)}
+                    />
+                  )}
+                  {props.handlers.delete && (
+                    <IconButton
+                      icon='delete'
+                      iconColor={theme.colors.error}
+                      size={20}
+                      onPress={() => props.handlers?.delete?.(item.ID)}
+                    />
+                  )}
                 </DataTable.Cell>
               )}
             </DataTable.Row>
           ))}
         </View>
 
-        {props.itemsLength > props.itemsPerPage && (
-          <DataTable.Pagination
-            page={page}
-            numberOfPages={Math.floor(props.itemsLength / props.itemsPerPage) + 1}
-            onPageChange={(page) => setPage(page)}
-            label={paginationLabel}
-            numberOfItemsPerPage={2}
-          />
-        )}
+        <DataTable.Pagination
+          page={page}
+          numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
+          onPageChange={(page) => setPage(page)}
+          // label={`${from + 1}-${to} из ${items.length}`}
+          style={{}}
+          showFastPaginationControls
+          // numberOfItemsPerPageList={numberOfItemsPerPageList}
+          numberOfItemsPerPage={numberOfItemsPerPage}
+          // onItemsPerPageChange={onItemsPerPageChange}
+          selectPageDropdownLabel={'Rows per page'}
+        />
       </DataTable>
     </View>
   )
@@ -72,15 +104,15 @@ const CreateTable = (props: iProps): JSX.Element => {
 
 const styles = StyleSheet.create({
   table: {
-    height: '100%',
     justifyContent: 'space-between',
-  },
-  tableRows: {
-    flex: 1,
+    marginBottom: 20,
   },
   container: {
-    height: '100%',
+    // height: '100%',
+  },
+  cell: {
+    fontSize: 10,
   },
 })
 
-export default CreateTable
+export default memo(CreateTable)

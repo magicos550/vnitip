@@ -1,15 +1,15 @@
 import { db } from '../DatabaseInitialization'
-import { iEggMassItem } from '../../store/slices/jobs/eggMassSlice'
+import { iAppraisalItem } from '../../store/slices/jobs/appraisalSlice'
 import moment from 'moment'
 
-export const eggMassLoad = async (): Promise<iEggMassItem[]> => {
+export const appraisalLoad = async (): Promise<iAppraisalItem[]> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM egg_mass',
+        'SELECT * FROM appraisal',
         [],
         (_, { rows: { _array } }) => {
-          resolve(_array as iEggMassItem[])
+          resolve(_array as iAppraisalItem[])
         },
         (_, error) => {
           reject(error)
@@ -20,11 +20,11 @@ export const eggMassLoad = async (): Promise<iEggMassItem[]> => {
   })
 }
 
-export const eggMassDelete = async (id: number): Promise<boolean> => {
+export const appraisalDelete = async (id: number): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'DELETE FROM egg_mass WHERE ID=?',
+        'DELETE FROM appraisal WHERE ID=?',
         [id],
         () => resolve(true),
         (_, error) => {
@@ -36,18 +36,27 @@ export const eggMassDelete = async (id: number): Promise<boolean> => {
   })
 }
 
-export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMassItem> => {
+export const appraisalAdd = async (
+  barcode: string,
+  mass: number,
+  chest: number,
+  legs: number,
+  remark: string,
+): Promise<iAppraisalItem> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into egg_mass (Barcode, Mass, Date) values (? , ?, ?)',
-        [barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
+        'insert into appraisal (Barcode, Mass, Chest, Legs, Remark, Date) values (?, ?, ?, ?, ?, ?)',
+        [barcode, mass, chest, legs, remark, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({
               ID: result.insertId,
               Barcode: barcode,
               Mass: mass,
+              Chest: chest,
+              Legs: legs,
+              Remark: remark,
               Date: moment().format('DD.MM.YYYY H:m:s'),
             })
           }
@@ -61,29 +70,31 @@ export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMas
   })
 }
 
-export const eggMassEdit = async (
+export const appraisalEdit = async (
   id: number,
-  mass: number,
-  date: string,
   barcode: string,
-): Promise<iEggMassItem> => {
+  mass: number,
+  chest: number,
+  legs: number,
+  remark: string,
+): Promise<iAppraisalItem> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'update egg_mass set Mass = ?, Date = ? where ID = ?',
-        [mass, moment().format('DD.MM.YYYY H:m:s'), id],
+        'update appraisal set Mass = ?, Chest = ?, Legs = ?, Remark = ?, Date = ? where ID = ?',
+        [mass, chest, legs, remark, moment().format('DD.MM.YYYY H:m:s'), id],
         (transaction, result) => {
           if (result.rowsAffected > 0) {
             resolve({
               ID: id,
               Barcode: barcode,
               Mass: mass,
-              Date: date,
+              Chest: chest,
+              Legs: legs,
+              Remark: remark,
+              Date: moment().format('DD.MM.YYYY H:m:s'),
             })
           }
-          /* if (result.insertId) {
-
-          } */
         },
         (_, error) => {
           reject(error)

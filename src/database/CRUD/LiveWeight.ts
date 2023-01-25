@@ -1,15 +1,15 @@
 import { db } from '../DatabaseInitialization'
-import { iEggMassItem } from '../../store/slices/jobs/eggMassSlice'
+import { iLiveWeightItem } from '../../store/slices/jobs/liveWeightSlice'
 import moment from 'moment'
 
-export const eggMassLoad = async (): Promise<iEggMassItem[]> => {
+export const liveWeightLoad = async (): Promise<iLiveWeightItem[]> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM egg_mass',
+        'SELECT * FROM live_weight',
         [],
         (_, { rows: { _array } }) => {
-          resolve(_array as iEggMassItem[])
+          resolve(_array as iLiveWeightItem[])
         },
         (_, error) => {
           reject(error)
@@ -20,11 +20,11 @@ export const eggMassLoad = async (): Promise<iEggMassItem[]> => {
   })
 }
 
-export const eggMassDelete = async (id: number): Promise<boolean> => {
+export const liveWeightDelete = async (id: number): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'DELETE FROM egg_mass WHERE ID=?',
+        'DELETE FROM live_weight WHERE ID=?',
         [id],
         () => resolve(true),
         (_, error) => {
@@ -36,11 +36,11 @@ export const eggMassDelete = async (id: number): Promise<boolean> => {
   })
 }
 
-export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMassItem> => {
+export const liveWeightAdd = async (barcode: string, mass: number): Promise<iLiveWeightItem> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into egg_mass (Barcode, Mass, Date) values (? , ?, ?)',
+        'insert into live_weight (Barcode, Mass, Date) values (? , ?, ?)',
         [barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
@@ -61,16 +61,16 @@ export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMas
   })
 }
 
-export const eggMassEdit = async (
+export const liveWeightEdit = async (
   id: number,
   mass: number,
   date: string,
   barcode: string,
-): Promise<iEggMassItem> => {
+): Promise<iLiveWeightItem> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'update egg_mass set Mass = ?, Date = ? where ID = ?',
+        'update live_weight set Mass = ?, Date = ? where ID = ?',
         [mass, moment().format('DD.MM.YYYY H:m:s'), id],
         (transaction, result) => {
           if (result.rowsAffected > 0) {

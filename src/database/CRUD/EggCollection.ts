@@ -40,8 +40,8 @@ export const eggCollectionAdd = async (barcode: string): Promise<iEggCollectionI
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into egg_collection (Barcode) values (?)',
-        [barcode],
+        'insert into egg_collection (Barcode, Date) values (?, ?)',
+        [barcode, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({

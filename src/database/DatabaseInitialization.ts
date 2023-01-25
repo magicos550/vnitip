@@ -2,6 +2,22 @@ import * as SQLite from 'expo-sqlite'
 
 export const db = SQLite.openDatabase('vnitip')
 
+const settingsTable = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS settings (ID INTEGER PRIMARY KEY AUTOINCREMENT, Barcode TEXT, Date TEXT)',
+        [],
+        () => resolve(true),
+        (_, error) => {
+          reject(error)
+          return false
+        },
+      )
+    })
+  })
+}
+
 const createEggCollectionTable = (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
@@ -70,7 +86,7 @@ Promise.all([
   createEggCollectionTable(),
   createEggMassTable(),
   createLiveWeightTable(),
-  createAppraisalTable,
+  createAppraisalTable(),
 ])
   .then(() => {
     console.log('ALL TABLES ARE CREATED SUCCESSFULLY')

@@ -14,7 +14,7 @@ const userSlice = createSlice({
       state.id = action.payload.id
     },
     logout(state) {
-      state.id = ''
+      state.id = null
     },
   },
 })

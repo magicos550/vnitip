@@ -12,6 +12,7 @@ import {
 } from '../../../database/CRUD/EggCollection'
 import { StyleSheet, View } from 'react-native'
 import CreateTable from '../../../components/tables/CreateTable'
+import Fab from '../../../components/fab/Fab'
 
 const EggCollection = (): JSX.Element => {
   const theme = useAppTheme()
@@ -68,13 +69,15 @@ const EggCollection = (): JSX.Element => {
           />
         </View>
       ) : (
-        <CreateTable
-          itemsLength={items.length}
-          itemsPerPage={8}
-          items={items}
-          columns={[{ name: '№', value: 'Barcode' }]}
-          handlers={{ delete: handleDeleteButtonClick }}
-        />
+        <>
+          <CreateTable
+            items={items}
+            columns={[{ name: '№', value: 'Barcode' }]}
+            handlers={{ delete: handleDeleteButtonClick }}
+          />
+
+          <Fab />
+        </>
       )}
     </View>
   )
