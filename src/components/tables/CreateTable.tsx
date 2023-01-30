@@ -23,16 +23,14 @@ const CreateTable = (props: iProps): JSX.Element => {
   const items = props.items
   const columns = props.columns
   const numberOfItemsPerPage = 8
-  const currentPage = Math.ceil(items.length / numberOfItemsPerPage)
+  const currentPage = Math.floor((items.length - 1) / numberOfItemsPerPage)
 
   const [page, setPage] = useState(currentPage)
   const from = page * numberOfItemsPerPage
   const to = Math.min((page + 1) * numberOfItemsPerPage, items.length)
 
-  console.log(currentPage)
-
   useEffect(() => {
-    setPage(currentPage)
+    setPage(currentPage >= 0 ? currentPage : 0)
   }, [currentPage])
 
   return (

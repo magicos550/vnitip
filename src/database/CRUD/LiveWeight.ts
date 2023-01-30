@@ -36,16 +36,37 @@ export const liveWeightDelete = async (id: number): Promise<boolean> => {
   })
 }
 
-export const liveWeightAdd = async (barcode: string, mass: number): Promise<iLiveWeightItem> => {
+export const liveWeightDeleteAll = async (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into live_weight (Barcode, Mass, Date) values (? , ?, ?)',
-        [barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
+        'DELETE FROM live_weight',
+        [],
+        () => resolve(true),
+        (_, error) => {
+          reject(error)
+          return false
+        },
+      )
+    })
+  })
+}
+
+export const liveWeightAdd = async (
+  user: string,
+  barcode: string,
+  mass: number,
+): Promise<iLiveWeightItem> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'insert into live_weight (User, Barcode, Mass, Date) values (?, ?, ?, ?)',
+        [user.replace(/(\r\n|\n|\r)/gm, ''), barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({
               ID: result.insertId,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Date: moment().format('DD.MM.YYYY H:m:s'),
@@ -63,6 +84,7 @@ export const liveWeightAdd = async (barcode: string, mass: number): Promise<iLiv
 
 export const liveWeightEdit = async (
   id: number,
+  user: string,
   mass: number,
   date: string,
   barcode: string,
@@ -76,6 +98,7 @@ export const liveWeightEdit = async (
           if (result.rowsAffected > 0) {
             resolve({
               ID: id,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Date: date,

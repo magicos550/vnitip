@@ -1,14 +1,15 @@
-import { ActivityIndicator, DataTable, IconButton } from 'react-native-paper'
+import { ActivityIndicator } from 'react-native-paper'
 import { useEffect, useState } from 'react'
 import { useAppTheme } from '../../../hooks/useCustomTheme'
 import * as Clipboard from 'expo-clipboard'
 import { RootState, useAppDispatch } from '../../../store/store'
-import { add, load, remove } from '../../../store/slices/jobs/eggCollectionSlice'
+import { add, load, remove, removeAll } from '../../../store/slices/jobs/eggCollectionSlice'
 import { useSelector } from 'react-redux'
 import {
   eggCollectionAdd,
   eggCollectionLoad,
   eggColllectionDelete,
+  eggCollectionDeleteAll,
 } from '../../../database/CRUD/EggCollection'
 import { StyleSheet, View } from 'react-native'
 import CreateTable from '../../../components/tables/CreateTable'
@@ -18,6 +19,7 @@ const EggCollection = (): JSX.Element => {
   const theme = useAppTheme()
   const dispatch = useAppDispatch()
   const items = useSelector((state: RootState) => state.eggCollection)
+  const user = useSelector((state: RootState) => state.user)
   const [loading, setLoading] = useState<boolean>(false)
 
   const handleDeleteButtonClick = (id: number): void => {
@@ -41,11 +43,12 @@ const EggCollection = (): JSX.Element => {
 
     const handleClipboard = Clipboard.addClipboardListener((): void => {
       Clipboard.getStringAsync().then((content: string) => {
-        eggCollectionAdd(content)
+        eggCollectionAdd(user.id || '', content.replace(/(\r\n|\n|\r)/gm, ''))
           .then((item) => {
             dispatch(
               add({
                 ID: item.ID,
+                User: user.id || '',
                 Barcode: item.Barcode,
                 Date: item.Date,
               }),
@@ -71,12 +74,26 @@ const EggCollection = (): JSX.Element => {
       ) : (
         <>
           <CreateTable
-            items={items}
+            items={items && Object.keys(items).map((key) => items[key])}
             columns={[{ name: '№', value: 'Barcode' }]}
             handlers={{ delete: handleDeleteButtonClick }}
           />
 
-          <Fab />
+          <Fab
+            data={Object.keys(items).map((item) => {
+              return {
+                Пользователь: items[item].User,
+                Код: items[item].Barcode,
+                Дата: items[item].Date,
+              }
+            })}
+            jobId='1'
+            deleteAllCallback={async () => {
+              await eggCollectionDeleteAll().then(() => {
+                dispatch(removeAll())
+              })
+            }}
+          />
         </>
       )}
     </View>

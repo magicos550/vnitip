@@ -36,7 +36,24 @@ export const appraisalDelete = async (id: number): Promise<boolean> => {
   })
 }
 
+export const appraisalDeleteAll = async (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'DELETE FROM appraisal',
+        [],
+        () => resolve(true),
+        (_, error) => {
+          reject(error)
+          return false
+        },
+      )
+    })
+  })
+}
+
 export const appraisalAdd = async (
+  user: string,
   barcode: string,
   mass: number,
   chest: number,
@@ -46,12 +63,13 @@ export const appraisalAdd = async (
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into appraisal (Barcode, Mass, Chest, Legs, Remark, Date) values (?, ?, ?, ?, ?, ?)',
-        [barcode, mass, chest, legs, remark, moment().format('DD.MM.YYYY H:m:s')],
+        'insert into appraisal (User, Barcode, Mass, Chest, Legs, Remark, Date) values (?, ?, ?, ?, ?, ?, ?)',
+        [user, barcode, mass, chest, legs, remark, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({
               ID: result.insertId,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Chest: chest,
@@ -72,6 +90,7 @@ export const appraisalAdd = async (
 
 export const appraisalEdit = async (
   id: number,
+  user: string,
   barcode: string,
   mass: number,
   chest: number,
@@ -87,6 +106,7 @@ export const appraisalEdit = async (
           if (result.rowsAffected > 0) {
             resolve({
               ID: id,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Chest: chest,

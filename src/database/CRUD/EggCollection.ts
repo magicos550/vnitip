@@ -36,16 +36,36 @@ export const eggColllectionDelete = async (id: number): Promise<boolean> => {
   })
 }
 
-export const eggCollectionAdd = async (barcode: string): Promise<iEggCollectionItem> => {
+export const eggCollectionDeleteAll = async (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into egg_collection (Barcode, Date) values (?, ?)',
-        [barcode, moment().format('DD.MM.YYYY H:m:s')],
+        'DELETE FROM egg_collection',
+        [],
+        () => resolve(true),
+        (_, error) => {
+          reject(error)
+          return false
+        },
+      )
+    })
+  })
+}
+
+export const eggCollectionAdd = async (
+  user: string,
+  barcode: string,
+): Promise<iEggCollectionItem> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'insert into egg_collection (User, Barcode, Date) values (?, ?, ?)',
+        [user, barcode, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({
               ID: result.insertId,
+              User: user,
               Barcode: barcode,
               Date: moment().format('DD.MM.YYYY H:m:s'),
             })

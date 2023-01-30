@@ -6,6 +6,7 @@ interface iLiveWeightState {
 
 export interface iLiveWeightItem {
   ID: number
+  User: string
   Barcode: string
   Mass: number
   Date: string
@@ -33,9 +34,12 @@ const liveWeightSlice = createSlice({
       delete state[action.payload]
       // return state[action.payload].filter((e: iEggMassItem) => e.ID !== action.payload)
     },
+    removeAll() {
+      return initialState
+    },
   },
 })
 
-export const { load, add, edit, remove } = liveWeightSlice.actions
+export const { load, add, edit, remove, removeAll } = liveWeightSlice.actions
 
 export default liveWeightSlice.reducer

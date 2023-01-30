@@ -1,25 +1,24 @@
 import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  Button,
-  Modal,
-  Portal,
-  Provider,
-  Text,
-  TextInput,
-} from 'react-native-paper'
+import { ActivityIndicator, Button, Modal, Portal, Text, TextInput } from 'react-native-paper'
 import { RootState, useAppDispatch, useAppSelector } from '../../../store/store'
 import { useAppTheme } from '../../../hooks/useCustomTheme'
 import CreateTable from '../../../components/tables/CreateTable'
-import { add, edit, load, remove } from '../../../store/slices/jobs/eggMassSlice'
+import { add, edit, load, remove, removeAll } from '../../../store/slices/jobs/eggMassSlice'
 import * as Clipboard from 'expo-clipboard'
-import { eggMassAdd, eggMassDelete, eggMassEdit, eggMassLoad } from '../../../database/CRUD/EggMass'
+import {
+  eggMassAdd,
+  eggMassDelete,
+  eggMassDeleteAll,
+  eggMassEdit,
+  eggMassLoad,
+} from '../../../database/CRUD/EggMass'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
 
 interface iEggItem {
   id?: number | null
+  user: string
   barcode: string
   mass: number
   date: string
@@ -36,9 +35,10 @@ const EggMass = (): JSX.Element => {
     setVisible(false)
   }
 
-  const [egg, setEgg] = useState<iEggItem>({ id: null, barcode: '', mass: 0, date: '' })
+  const [egg, setEgg] = useState<iEggItem>({ id: null, user: '', barcode: '', mass: 0, date: '' })
   const [loading, setLoading] = useState<boolean>(false)
   const items = useAppSelector((state: RootState) => state.eggMass)
+  const user = useAppSelector((state: RootState) => state.user)
 
   const handleDeleteButtonClick = (id: number): void => {
     eggMassDelete(id)
@@ -49,20 +49,34 @@ const EggMass = (): JSX.Element => {
   }
 
   const handleEditButtonClick = (item: Record<string, any>): void => {
-    setEgg({ id: item.ID, barcode: item.Barcode, mass: item.Mass, date: item.date })
+    setEgg({
+      id: item.ID,
+      user: user.id || '',
+      barcode: item.Barcode,
+      mass: item.Mass,
+      date: item.date,
+    })
     showModal()
   }
 
   const handlePopupButtonClick = (): void => {
     if (!egg.id) {
-      eggMassAdd(egg.barcode, egg.mass)
+      eggMassAdd(user.id || '', egg.barcode, egg.mass)
         .then((item) => {
-          dispatch(add(item))
+          dispatch(
+            add({
+              ID: item.ID,
+              User: user.id || '',
+              Barcode: item.Barcode,
+              Mass: item.Mass,
+              Date: item.Date,
+            }),
+          )
           hideModal()
         })
         .catch((error) => console.error(error))
     } else {
-      eggMassEdit(egg.id, egg.mass, egg.date, egg.barcode)
+      eggMassEdit(egg.id, user.id || '', egg.mass, egg.date, egg.barcode)
         .then((item) => {
           dispatch(edit(item))
           hideModal()
@@ -84,7 +98,12 @@ const EggMass = (): JSX.Element => {
 
     const handleClipboard = Clipboard.addClipboardListener((): void => {
       Clipboard.getStringAsync().then((content: string) => {
-        setEgg({ barcode: content, mass: 0, date: moment().format('DD.MM.YYYY H:m:s') })
+        setEgg({
+          user: user.id || '',
+          barcode: content,
+          mass: 0,
+          date: moment().format('DD.MM.YYYY H:m:s'),
+        })
         showModal()
       })
     })
@@ -122,7 +141,13 @@ const EggMass = (): JSX.Element => {
             label='Масса яйца в граммах'
             value={(egg.mass && String(egg.mass)) || ''}
             onChangeText={(text) =>
-              setEgg({ id: egg.id, barcode: egg.barcode, mass: Number(text), date: egg.date })
+              setEgg({
+                id: egg.id,
+                user: user.id || '',
+                barcode: egg.barcode,
+                mass: Number(text),
+                date: egg.date,
+              })
             }
           />
           <Button style={{ marginTop: 10 }} onPress={handlePopupButtonClick}>
@@ -131,7 +156,22 @@ const EggMass = (): JSX.Element => {
         </Modal>
       </Portal>
 
-      <Fab />
+      <Fab
+        data={Object.keys(items).map((item) => {
+          return {
+            Пользователь: items[item].User,
+            Код: items[item].Barcode,
+            Масса: items[item].Mass,
+            Дата: items[item].Date,
+          }
+        })}
+        jobId='2'
+        deleteAllCallback={async () => {
+          eggMassDeleteAll().then(() => {
+            dispatch(removeAll())
+          })
+        }}
+      />
     </View>
   )
 }

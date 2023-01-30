@@ -6,11 +6,14 @@ import SettingsPage from './pages/SettingsPage'
 import HomePage from './pages/HomePage'
 import JobsPage from './pages/JobsPage'
 import { useSelector } from 'react-redux'
-import { RootState } from './store/store'
+import { RootState, useAppDispatch, useAppSelector } from './store/store'
 import EggCollection from './pages/jobs/EggCollection/EggCollection'
 import EggMass from './pages/jobs/EggMass/EggMass'
 import LiveWeight from './pages/jobs/LiveWeight/LiveWeight'
 import Appraisal from './pages/jobs/Appraisal/Appraisal'
+import { save } from './store/slices/settingsSlice'
+import { iSettings } from './types'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export type StackParamsList = {
   Authorization: undefined
@@ -26,8 +29,22 @@ export type StackParamsList = {
 
 const Stack = createNativeStackNavigator<StackParamsList>()
 
+const getSettings = async (): Promise<iSettings | undefined> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('settings')
+    return jsonValue !== null ? JSON.parse(jsonValue) : null
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 export default function Index(): JSX.Element {
-  const user = useSelector((state: RootState) => state.user)
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((state: RootState) => state.user)
+
+  getSettings().then((res) => {
+    res && dispatch(save(res))
+  })
 
   return (
     <>

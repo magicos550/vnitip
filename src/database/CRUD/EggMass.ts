@@ -36,16 +36,37 @@ export const eggMassDelete = async (id: number): Promise<boolean> => {
   })
 }
 
-export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMassItem> => {
+export const eggMassDeleteAll = async (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        'insert into egg_mass (Barcode, Mass, Date) values (? , ?, ?)',
-        [barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
+        'DELETE FROM egg_mass',
+        [],
+        () => resolve(true),
+        (_, error) => {
+          reject(error)
+          return false
+        },
+      )
+    })
+  })
+}
+
+export const eggMassAdd = async (
+  user: string,
+  barcode: string,
+  mass: number,
+): Promise<iEggMassItem> => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'insert into egg_mass (User, Barcode, Mass, Date) values (?, ?, ?, ?)',
+        [user, barcode, mass, moment().format('DD.MM.YYYY H:m:s')],
         (transaction, result) => {
           if (result.insertId) {
             resolve({
               ID: result.insertId,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Date: moment().format('DD.MM.YYYY H:m:s'),
@@ -63,6 +84,7 @@ export const eggMassAdd = async (barcode: string, mass: number): Promise<iEggMas
 
 export const eggMassEdit = async (
   id: number,
+  user: string,
   mass: number,
   date: string,
   barcode: string,
@@ -76,6 +98,7 @@ export const eggMassEdit = async (
           if (result.rowsAffected > 0) {
             resolve({
               ID: id,
+              User: user,
               Barcode: barcode,
               Mass: mass,
               Date: date,

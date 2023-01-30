@@ -1,13 +1,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { iEggMassItem } from './eggMassSlice'
-import { iLiveWeightItem } from './liveWeightSlice'
 
 interface iAppraisalState {
-  [key: string]: iLiveWeightItem
+  [key: string]: iAppraisalItem
 }
 
 export interface iAppraisalItem {
   ID: number
+  User: string
   Barcode: string
   Mass: number
   Chest: number
@@ -36,11 +35,13 @@ const appraisalSlice = createSlice({
     },
     remove(state, action: PayloadAction<number>) {
       delete state[action.payload]
-      // return state[action.payload].filter((e: iEggMassItem) => e.ID !== action.payload)
+    },
+    removeAll() {
+      return initialState
     },
   },
 })
 
-export const { load, add, edit, remove } = appraisalSlice.actions
+export const { load, add, edit, remove, removeAll } = appraisalSlice.actions
 
 export default appraisalSlice.reducer

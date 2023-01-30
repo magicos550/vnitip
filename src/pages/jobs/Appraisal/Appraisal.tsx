@@ -1,23 +1,15 @@
 import { StyleSheet, View } from 'react-native'
 import { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  Button,
-  Modal,
-  Portal,
-  Provider,
-  Text,
-  TextInput,
-} from 'react-native-paper'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '../../../store/store'
+import { ActivityIndicator, Button, Modal, Portal, Text, TextInput } from 'react-native-paper'
+import { RootState, useAppDispatch, useAppSelector } from '../../../store/store'
 import { useAppTheme } from '../../../hooks/useCustomTheme'
 import CreateTable from '../../../components/tables/CreateTable'
-import { add, edit, load, remove } from '../../../store/slices/jobs/appraisalSlice'
+import { add, edit, load, remove, removeAll } from '../../../store/slices/jobs/appraisalSlice'
 import * as Clipboard from 'expo-clipboard'
 import {
   appraisalAdd,
   appraisalDelete,
+  appraisalDeleteAll,
   appraisalEdit,
   appraisalLoad,
 } from '../../../database/CRUD/Appraisal'
@@ -26,6 +18,7 @@ import Fab from '../../../components/fab/Fab'
 
 interface iAppraisalItem {
   id?: number | null
+  user: string
   barcode: string
   mass: number
   chest: number
@@ -47,6 +40,7 @@ const Appraisal = (): JSX.Element => {
 
   const [egg, setEgg] = useState<iAppraisalItem>({
     id: null,
+    user: '',
     barcode: '',
     mass: 0,
     chest: 0,
@@ -55,7 +49,8 @@ const Appraisal = (): JSX.Element => {
     date: '',
   })
   const [loading, setLoading] = useState<boolean>(false)
-  const items = useSelector((state: RootState) => state.appraisal)
+  const items = useAppSelector((state: RootState) => state.appraisal)
+  const user = useAppSelector((state: RootState) => state.user)
 
   const handleDeleteButtonClick = (id: number): void => {
     appraisalDelete(id)
@@ -68,6 +63,7 @@ const Appraisal = (): JSX.Element => {
   const handleEditButtonClick = (item: Record<string, any>): void => {
     setEgg({
       id: item.ID,
+      user: user.id || '',
       barcode: item.Barcode,
       mass: item.Mass,
       chest: item.Chest,
@@ -81,11 +77,12 @@ const Appraisal = (): JSX.Element => {
 
   const handlePopupButtonClick = (): void => {
     if (!egg.id) {
-      appraisalAdd(egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
+      appraisalAdd(user.id || '', egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
         .then((item) => {
           dispatch(
             add({
               ID: item.ID,
+              User: user.id || '',
               Barcode: item.Barcode,
               Mass: item.Mass,
               Chest: item.Chest,
@@ -98,11 +95,12 @@ const Appraisal = (): JSX.Element => {
         })
         .catch((error) => console.error(error))
     } else {
-      appraisalEdit(egg.id, egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
+      appraisalEdit(egg.id, user.id || '', egg.barcode, egg.mass, egg.chest, egg.legs, egg.remark)
         .then((item) => {
           dispatch(
             edit({
               ID: item.ID,
+              User: user.id || '',
               Barcode: item.Barcode,
               Mass: item.Mass,
               Chest: item.Chest,
@@ -130,7 +128,8 @@ const Appraisal = (): JSX.Element => {
     const handleClipboard = Clipboard.addClipboardListener((): void => {
       Clipboard.getStringAsync().then((content: string) => {
         setEgg({
-          barcode: content,
+          barcode: content.replace(/(\r\n|\n|\r)/gm, ''),
+          user: user.id || '',
           mass: 0,
           chest: 0,
           legs: 0,
@@ -204,7 +203,25 @@ const Appraisal = (): JSX.Element => {
         </Modal>
       </Portal>
 
-      <Fab />
+      <Fab
+        data={Object.keys(items).map((item) => {
+          return {
+            Пользователь: items[item].User,
+            Код: items[item].Barcode,
+            Масса: items[item].Mass,
+            Грудь: items[item].Chest,
+            Ноги: items[item].Legs,
+            Примечание: items[item].Remark,
+            Дата: items[item].Date,
+          }
+        })}
+        jobId='4'
+        deleteAllCallback={() => {
+          appraisalDeleteAll().then(() => {
+            dispatch(removeAll())
+          })
+        }}
+      />
     </View>
   )
 }

@@ -1,30 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ActivityIndicator, Button, Text, TextInput } from 'react-native-paper'
+import { Button, Snackbar, Text, TextInput } from 'react-native-paper'
 import { save } from '../store/slices/settingsSlice'
-import { useAppDispatch } from '../store/store'
+import { RootState, useAppDispatch, useAppSelector } from '../store/store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useAppTheme } from '../hooks/useCustomTheme'
-
-interface iSettings {
-  area: string
-  housing: string
-  line: string
-}
+import { iSettings } from '../types'
 
 const SettingsPage = (): JSX.Element => {
-  const theme = useAppTheme()
   const dispatch = useAppDispatch()
-  const [loading, setLoading] = useState(true)
+  const getSettings = useAppSelector((state: RootState) => state.settings)
+  const [settings, setSettings] = useState(getSettings)
 
-  const getData = async (): Promise<iSettings | undefined> => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('settings')
-      return jsonValue !== null ? JSON.parse(jsonValue) : null
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  const [visible, setVisible] = useState(false)
+
+  const onToggleSnackBar = () => setVisible(!visible)
+
+  const onDismissSnackBar = () => setVisible(false)
 
   const storeData = async (value: iSettings) => {
     try {
@@ -35,60 +26,49 @@ const SettingsPage = (): JSX.Element => {
     }
   }
 
-  const [settings, setSettings] = useState<iSettings>({
-    area: '0',
-    housing: '0',
-    line: '0',
-  })
-
   const handleSave = async (settings: iSettings) => {
-    storeData(settings).then(() => dispatch(save(settings)))
+    storeData(settings).then(() => {
+      onToggleSnackBar()
+      dispatch(save(settings))
+    })
   }
 
-  useEffect(() => {
-    getData().then((res): void => {
-      res && setSettings(res)
-      setLoading(false)
-    })
-  }, [])
-
   return (
-    <>
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator
-            style={{ alignSelf: 'center' }}
-            animating={true}
-            color={theme.colors.primary}
-          />
-        </View>
-      ) : (
-        <View style={styles.container}>
-          <Text variant='titleLarge'>Настройки</Text>
-          <TextInput
-            label='Площадка'
-            value={settings.area}
-            style={styles.marginTop}
-            onChangeText={(val) => setSettings({ ...settings, area: val })}
-          />
-          <TextInput
-            label='Корпус'
-            value={settings.housing}
-            style={styles.marginTop}
-            onChangeText={(val) => setSettings({ ...settings, housing: val })}
-          />
-          <TextInput
-            label='Линия'
-            value={settings.line}
-            style={styles.marginTop}
-            onChangeText={(val) => setSettings({ ...settings, line: val })}
-          />
-          <Button mode='contained' style={styles.marginTop} onPress={() => handleSave(settings)}>
-            Сохранить
-          </Button>
-        </View>
-      )}
-    </>
+    <View style={styles.container}>
+      <Text variant='titleLarge'>Настройки</Text>
+      <TextInput
+        label='Площадка'
+        value={settings.area}
+        style={styles.marginTop}
+        onChangeText={(val) => setSettings({ ...settings, area: val })}
+      />
+      <TextInput
+        label='Корпус'
+        value={settings.housing}
+        style={styles.marginTop}
+        onChangeText={(val) => setSettings({ ...settings, housing: val })}
+      />
+      <TextInput
+        label='Линия'
+        value={settings.line}
+        style={styles.marginTop}
+        onChangeText={(val) => setSettings({ ...settings, line: val })}
+      />
+      <Button mode='contained' style={styles.marginTop} onPress={() => handleSave(settings)}>
+        Сохранить
+      </Button>
+
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        duration={3000}
+        action={{
+          label: 'Ок',
+        }}
+      >
+        Настройки сохранены
+      </Snackbar>
+    </View>
   )
 }
 

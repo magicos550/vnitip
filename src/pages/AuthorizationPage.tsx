@@ -14,7 +14,7 @@ const AuthorizationPage = ({ navigation }: NavigationProp): JSX.Element => {
   useEffect(() => {
     const handleClipboard = Clipboard.addClipboardListener(() => {
       Clipboard.getStringAsync().then((content: string) => {
-        dispatch(login({ id: content }))
+        dispatch(login({ id: content.replace(/(\r\n|\n|\r)/gm, '') }))
         navigation.navigate('Home')
       })
     })
