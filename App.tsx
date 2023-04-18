@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, StatusBar } from 'react-native'
 import { MD3LightTheme, Provider as PaperProvider } from 'react-native-paper'
 import Index from './src/Index'
 import { customTheme } from './src/config/theme'
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar'
 
 const theme = {
   ...MD3LightTheme,
@@ -16,21 +17,20 @@ const theme = {
 
 export default function App(): JSX.Element {
   return (
-    <ReduxProvider store={store}>
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.container]}>
+      <ExpoStatusBar style='light' />
+      <ReduxProvider store={store}>
         <PaperProvider theme={theme}>
           <Index />
         </PaperProvider>
-      </SafeAreaView>
-    </ReduxProvider>
+      </ReduxProvider>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    height: '100%',
     marginTop: StatusBar.currentHeight,
   },
 })

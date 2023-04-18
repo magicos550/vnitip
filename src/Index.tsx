@@ -12,20 +12,8 @@ import EggMass from './pages/jobs/EggMass/EggMass'
 import LiveWeight from './pages/jobs/LiveWeight/LiveWeight'
 import Appraisal from './pages/jobs/Appraisal/Appraisal'
 import { save } from './store/slices/settingsSlice'
-import { iSettings } from './types'
+import { iSettings, StackParamsList } from './types'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
-export type StackParamsList = {
-  Authorization: undefined
-  Home: undefined
-  Jobs: undefined
-  Settings: undefined
-
-  EggCollection: undefined
-  EggMass: undefined
-  LiveWeight: undefined
-  Appraisal: undefined
-}
 
 const Stack = createNativeStackNavigator<StackParamsList>()
 

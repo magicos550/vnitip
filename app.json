@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "vnitip",
+    "name": "TSD Smena",
     "slug": "appslug",
     "privacy": "unlisted",
     "platforms": [
@@ -32,6 +32,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "04575901-5a49-48ce-a160-55d3deea90dd"
+      }
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "translucent": true
     }
   }
 }
