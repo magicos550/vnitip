@@ -4,7 +4,7 @@ interface iLiveWeightState {
   [key: string]: iLiveWeightItem
 }
 
-export interface iLiveWeightItem {
+interface iLiveWeightItem {
   ID: number
   User: string
   Barcode: string

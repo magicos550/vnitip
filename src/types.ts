@@ -19,3 +19,29 @@ export type StackParamsList = {
   LiveWeight: undefined
   Appraisal: undefined
 }
+
+export interface iAppraisalItem {
+  id?: number | null
+  user: string
+  barcode: string
+  mass: number
+  chest: number
+  legs: number
+  remark: string
+  date: string
+}
+
+export interface iEggItem {
+  id?: number | null
+  user: string
+  barcode: string
+  mass: number
+  date: string
+}
+
+export interface iLiveWeightItem {
+  id?: number | null
+  barcode: string
+  mass: number
+  date: string
+}

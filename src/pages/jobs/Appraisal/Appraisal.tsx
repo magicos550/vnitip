@@ -15,17 +15,7 @@ import {
 } from '../../../database/CRUD/Appraisal'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
-
-interface iAppraisalItem {
-  id?: number | null
-  user: string
-  barcode: string
-  mass: number
-  chest: number
-  legs: number
-  remark: string
-  date: string
-}
+import { iAppraisalItem } from '../../../types'
 
 const Appraisal = (): JSX.Element => {
   const theme = useAppTheme()

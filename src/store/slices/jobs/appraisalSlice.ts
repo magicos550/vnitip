@@ -4,7 +4,7 @@ interface iAppraisalState {
   [key: string]: iAppraisalItem
 }
 
-export interface iAppraisalItem {
+interface iAppraisalItem {
   ID: number
   User: string
   Barcode: string

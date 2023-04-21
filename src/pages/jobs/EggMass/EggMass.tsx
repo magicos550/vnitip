@@ -15,14 +15,7 @@ import {
 } from '../../../database/CRUD/EggMass'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
-
-interface iEggItem {
-  id?: number | null
-  user: string
-  barcode: string
-  mass: number
-  date: string
-}
+import { iEggItem } from '../../../types'
 
 const EggMass = (): JSX.Element => {
   const theme = useAppTheme()

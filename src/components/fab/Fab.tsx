@@ -1,5 +1,5 @@
 import { Button, FAB, Modal, Portal, Text } from 'react-native-paper'
-import { StyleSheet, PermissionsAndroid, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useAppTheme } from '../../hooks/useCustomTheme'
 import { useMakeCSV } from '../../hooks/useMakeCSV'
 import { useSelector } from 'react-redux'

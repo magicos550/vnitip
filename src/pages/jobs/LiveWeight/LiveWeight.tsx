@@ -15,13 +15,7 @@ import {
 } from '../../../database/CRUD/LiveWeight'
 import moment from 'moment'
 import Fab from '../../../components/fab/Fab'
-
-interface iEggItem {
-  id?: number | null
-  barcode: string
-  mass: number
-  date: string
-}
+import { iLiveWeightItem } from '../../../types'
 
 const LiveWeight = (): JSX.Element => {
   const theme = useAppTheme()
@@ -34,7 +28,7 @@ const LiveWeight = (): JSX.Element => {
     setVisible(false)
   }
 
-  const [egg, setEgg] = useState<iEggItem>({ id: null, barcode: '', mass: 0, date: '' })
+  const [egg, setEgg] = useState<iLiveWeightItem>({ id: null, barcode: '', mass: 0, date: '' })
   const [loading, setLoading] = useState<boolean>(false)
   const items = useAppSelector((state: RootState) => state.liveWeight)
   const user = useAppSelector((state: RootState) => state.user)

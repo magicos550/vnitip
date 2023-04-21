@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import { DataTable, IconButton, Text } from 'react-native-paper'
-import { useState, memo, useEffect, useMemo } from 'react'
+import { useState, memo, useEffect } from 'react'
 import { useAppTheme } from '../../hooks/useCustomTheme'
 
 interface iProps {
@@ -34,7 +34,7 @@ const CreateTable = (props: iProps): JSX.Element => {
   }, [currentPage])
 
   return (
-    <View style={styles.container}>
+    <View>
       <DataTable style={styles.table}>
         <DataTable.Header>
           {columns.map((item) => (
@@ -87,12 +87,9 @@ const CreateTable = (props: iProps): JSX.Element => {
           page={page}
           numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
           onPageChange={(page) => setPage(page)}
-          // label={`${from + 1}-${to} из ${items.length}`}
           style={{}}
           showFastPaginationControls
-          // numberOfItemsPerPageList={numberOfItemsPerPageList}
           numberOfItemsPerPage={numberOfItemsPerPage}
-          // onItemsPerPageChange={onItemsPerPageChange}
           selectPageDropdownLabel={'Rows per page'}
         />
       </DataTable>
@@ -104,9 +101,6 @@ const styles = StyleSheet.create({
   table: {
     justifyContent: 'space-between',
     marginBottom: 20,
-  },
-  container: {
-    // height: '100%',
   },
   cell: {
     fontSize: 10,

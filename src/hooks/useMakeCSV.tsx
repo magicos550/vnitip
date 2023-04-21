@@ -38,7 +38,6 @@ export async function useMakeCSV(data: iData[], filename: string) {
   XLSX.utils.book_append_sheet(wb, ws, 'Data')
 
   const csv = XLSX.utils.sheet_to_csv(ws, { FS: ';' })
-  console.log()
   const fileUri = FileSystem.documentDirectory + 'formData.csv'
 
   await saveAndroidFile(fileUri, filename, `\ufeff ${csv}`)
